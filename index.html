@@ -1,0 +1,198 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>new-maemi Paper Operations</title><style>
+:root {
+  --bg: #101110;
+  --surface: #171817;
+  --surface-2: #1d1f1d;
+  --line: #30332f;
+  --line-soft: #242624;
+  --text: #f0f2ed;
+  --muted: #9ca49a;
+  --green: #64d99f;
+  --green-soft: #18382a;
+  --red: #ff7373;
+  --red-soft: #3b2020;
+  --amber: #f2c14e;
+  --amber-soft: #392f18;
+  --cyan: #74c7ec;
+  --cyan-soft: #18313c;
+}
+* { box-sizing: border-box; }
+html { background: var(--bg); }
+body { margin: 0; background: var(--bg); color: var(--text); font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 13px; line-height: 1.45; letter-spacing: 0; overflow-x: hidden; }
+button { font: inherit; letter-spacing: 0; }
+.app-shell { min-height: 100vh; }
+.topbar { min-height: 72px; padding: 12px 24px; border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; gap: 24px; background: #131413; position: sticky; top: 0; z-index: 20; }
+.identity { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.mark { width: 38px; height: 38px; display: grid; place-items: center; background: var(--green); color: #0e1712; border-radius: 6px; font-weight: 900; font-size: 13px; }
+h1, h2, p { margin: 0; letter-spacing: 0; }
+h1 { font-size: 17px; font-weight: 760; }
+.identity p { color: var(--muted); font-size: 11px; margin-top: 2px; }
+.runtime { display: flex; align-items: center; gap: 10px; color: var(--muted); white-space: nowrap; }
+.health, .mode { display: inline-flex; align-items: center; gap: 7px; height: 30px; padding: 0 9px; border: 1px solid var(--line); border-radius: 5px; }
+.health b { color: var(--text); font-size: 11px; }
+.mode { color: var(--amber); border-color: #5b4b25; background: #201d14; font-size: 10px; font-weight: 800; }
+.status-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; background: var(--muted); flex: 0 0 auto; }
+.status-dot.healthy { background: var(--green); box-shadow: 0 0 0 3px rgba(100,217,159,.12); }
+.status-dot.delayed { background: var(--amber); }
+.status-dot.stale { background: var(--red); }
+#freshness { font-size: 11px; }
+main { max-width: 1500px; margin: 0 auto; padding: 20px 24px 48px; }
+.summary-band { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+.metric { padding: 14px 16px; min-height: 90px; border-right: 1px solid var(--line); display: flex; flex-direction: column; justify-content: center; min-width: 0; }
+.metric:last-child { border-right: 0; }
+.metric span { color: var(--muted); font-size: 11px; }
+.metric strong { margin: 3px 0 1px; font-size: 23px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.metric small { color: #747c73; font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.positive { color: var(--green) !important; }
+.negative { color: var(--red) !important; }
+.alert { margin-top: 12px; min-height: 42px; display: flex; align-items: center; gap: 14px; padding: 9px 12px; border: 1px solid #6b5120; border-left: 3px solid var(--amber); background: var(--amber-soft); border-radius: 4px; color: #e9d59d; }
+.alert strong { color: var(--amber); white-space: nowrap; }
+.alert span { width: 100%; max-width: 100%; min-width: 0; white-space: normal; overflow-wrap: anywhere; word-break: break-word; }
+.scan-band { margin-top: 22px; }
+.section-heading { min-height: 48px; display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; margin-bottom: 10px; }
+.section-heading h2 { font-size: 15px; margin-top: 1px; }
+.eyebrow { color: var(--green); font-size: 9px; font-weight: 800; }
+.subtle { color: var(--muted); font-size: 10px; text-align: right; }
+.symbol-grid { display: grid; grid-template-columns: repeat(13, minmax(82px, 1fr)); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; background: var(--surface); }
+.symbol-item { min-width: 0; min-height: 62px; padding: 9px 10px; border-right: 1px solid var(--line-soft); display: grid; grid-template-columns: 9px minmax(0, 1fr); grid-template-rows: auto auto; align-items: center; column-gap: 5px; }
+.symbol-item:last-child { border-right: 0; }
+.symbol-item strong { font-size: 11px; overflow: hidden; text-overflow: ellipsis; }
+.symbol-price { grid-column: 2; color: var(--text); font-size: 11px; font-variant-numeric: tabular-nums; overflow: hidden; text-overflow: ellipsis; }
+.symbol-item time { display: none; }
+.tabs { display: flex; align-items: center; gap: 2px; margin-top: 26px; border-bottom: 1px solid var(--line); overflow-x: auto; }
+.tab { min-height: 39px; border: 0; border-bottom: 2px solid transparent; color: var(--muted); background: transparent; padding: 0 14px; cursor: pointer; white-space: nowrap; }
+.tab:hover { color: var(--text); background: var(--surface); }
+.tab.active { color: var(--text); border-bottom-color: var(--green); }
+.tab span { color: var(--muted); margin-left: 5px; font-size: 10px; }
+.tab-panel { display: none; min-width: 0; max-width: 100%; padding-top: 8px; }
+.tab-panel.active { display: block; }
+.table-wrap { width: 100%; max-width: 100%; border: 1px solid var(--line); border-radius: 6px; overflow: auto; max-height: 560px; background: var(--surface); }
+table { width: 100%; border-collapse: collapse; font-size: 11px; }
+th, td { min-height: 38px; padding: 9px 11px; text-align: left; border-bottom: 1px solid var(--line-soft); white-space: nowrap; }
+th { position: sticky; top: 0; z-index: 2; background: var(--surface-2); color: var(--muted); font-size: 9px; font-weight: 750; text-transform: uppercase; }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:hover td { background: #1b1d1b; }
+td small { display: block; color: #6f766e; font-size: 9px; margin-top: 2px; max-width: 310px; overflow: hidden; text-overflow: ellipsis; }
+.num { text-align: right; font-variant-numeric: tabular-nums; }
+.stop { color: var(--red); }
+.target { color: var(--green); }
+.pill { display: inline-flex; align-items: center; height: 21px; padding: 0 6px; border: 1px solid var(--line); border-radius: 4px; color: var(--muted); background: var(--surface-2); font-size: 9px; font-weight: 800; }
+.pill.long, .pill.on, .pill.pass { color: var(--green); border-color: #2c6047; background: var(--green-soft); }
+.pill.short, .pill.fail { color: var(--red); border-color: #6a3434; background: var(--red-soft); }
+.pill.both, .pill.watch { color: var(--amber); border-color: #665329; background: var(--amber-soft); }
+.pill.proxy { color: var(--cyan); border-color: #31596a; background: var(--cyan-soft); }
+.empty { min-height: 120px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 6px; color: var(--muted); background: var(--surface); }
+footer { max-width: 1500px; margin: 0 auto; padding: 18px 24px 32px; border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; color: var(--muted); font-size: 10px; }
+footer div { display: flex; flex-direction: column; gap: 3px; }
+footer strong { color: var(--text); font-size: 10px; }
+@media (max-width: 1100px) {
+  .summary-band { grid-template-columns: repeat(3, 1fr); }
+  .metric:nth-child(3) { border-right: 0; }
+  .metric:nth-child(-n+3) { border-bottom: 1px solid var(--line); }
+  .symbol-grid { grid-template-columns: repeat(5, 1fr); }
+  .symbol-item { border-bottom: 1px solid var(--line-soft); }
+}
+@media (max-width: 680px) {
+  .topbar { padding: 10px 14px; position: static; flex-direction: column; align-items: stretch; gap: 9px; }
+  .identity p { display: none; }
+  .runtime { width: 100%; min-width: 0; flex-wrap: nowrap; justify-content: flex-start; gap: 5px; }
+  #freshness { width: auto; margin-left: auto; text-align: right; }
+  main { padding: 14px 12px 36px; }
+  .summary-band { grid-template-columns: repeat(2, 1fr); }
+  .metric { min-height: 76px; padding: 10px 12px; }
+  .metric:nth-child(2n) { border-right: 0; }
+  .metric:nth-child(-n+4) { border-bottom: 1px solid var(--line); }
+  .metric strong { font-size: 19px; }
+  .symbol-grid { width: 100%; max-width: 100%; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .alert { align-items: stretch; flex-direction: column; gap: 2px; }
+  .section-heading { align-items: flex-start; }
+  .subtle { max-width: 45%; }
+  footer { grid-template-columns: 1fr; padding: 16px 12px 28px; }
+}
+</style></head><body>
+<div class="app-shell">
+  <header class="topbar">
+    <div class="identity">
+      <span class="mark">NM</span>
+      <div><h1>new-maemi Paper Operations</h1><p>Bybit mainnet data · deterministic portfolio</p></div>
+    </div>
+    <div class="runtime">
+      <span class="health" id="health" data-ts="2026-06-22T14:06:09.155103+00:00"><i class="status-dot stale"></i><b>데이터 오래됨</b></span>
+      <span class="mode">PAPER</span>
+      <time id="freshness" data-ts="2026-06-22T14:06:09.155103+00:00">06-22 23:06 KST</time>
+    </div>
+  </header>
+
+  <main>
+    <section class="summary-band" aria-label="운영 요약">
+      <div class="metric"><span>열린 포지션</span><strong>13</strong><small>0 pending</small></div>
+      <div class="metric"><span>청산 거래</span><strong>1</strong><small>PF 0.00</small></div>
+      <div class="metric"><span>실현 net</span><strong class="negative">-0.31%</strong><small>fractional return</small></div>
+      <div class="metric"><span>스캔 범위</span><strong>13</strong><small>symbols · 10 families</small></div>
+      <div class="metric"><span>거래 비용</span><strong>11.0 bps</strong><small>round trip · slip 0.0</small></div>
+      <div class="metric"><span>결정 감사</span><strong>1,092</strong><small>rows</small></div>
+    </section>
+
+    <div class="alert"><strong>중복 포지션 감지</strong><span>SOLUSDT · Box Pressure · LONG 2개 / BTCUSDT · Box Pressure · LONG 2개 / TRXUSDT · Box Breakout · LONG 2개</span></div>
+
+    <section class="scan-band">
+      <div class="section-heading"><div><span class="eyebrow">MARKET WATCH</span><h2>13종목 스캔 상태</h2></div><span class="subtle">마지막 완료된 판단 기준</span></div>
+      <div class="symbol-grid"><div class="symbol-item" data-ts="2026-06-22T14:06:02.202021+00:00"><span class="status-dot stale"></span><strong>BTCUSDT</strong><span class="symbol-price">65,398.40</span><time>23:06</time></div><div class="symbol-item" data-ts="2026-06-22T14:06:02.957491+00:00"><span class="status-dot stale"></span><strong>ETHUSDT</strong><span class="symbol-price">1,771.96</span><time>23:06</time></div><div class="symbol-item" data-ts="2026-06-22T14:06:03.527195+00:00"><span class="status-dot stale"></span><strong>SOLUSDT</strong><span class="symbol-price">74.6300</span><time>23:06</time></div><div class="symbol-item" data-ts="2026-06-22T14:06:04.124126+00:00"><span class="status-dot stale"></span><strong>XRPUSDT</strong><span class="symbol-price">1.1588</span><time>23:06</time></div><div class="symbol-item" data-ts="2026-06-22T14:06:04.635649+00:00"><span class="status-dot stale"></span><strong>DOGEUSDT</strong><span class="symbol-price">0.08470</span><time>23:06</time></div><div class="symbol-item" data-ts="2026-06-22T14:06:05.201040+00:00"><span class="status-dot stale"></span><strong>ADAUSDT</strong><span class="symbol-price">0.16240</span><time>23:06</time></div><div class="symbol-item" data-ts="2026-06-22T14:06:05.851596+00:00"><span class="status-dot stale"></span><strong>AVAXUSDT</strong><span class="symbol-price">6.4410</span><time>23:06</time></div><div class="symbol-item" data-ts="2026-06-22T14:06:06.887541+00:00"><span class="status-dot stale"></span><strong>LINKUSDT</strong><span class="symbol-price">8.1140</span><time>23:06</time></div><div class="symbol-item" data-ts="2026-06-22T14:06:07.964645+00:00"><span class="status-dot stale"></span><strong>LTCUSDT</strong><span class="symbol-price">45.5300</span><time>23:06</time></div><div class="symbol-item" data-ts="2026-06-22T14:06:08.605909+00:00"><span class="status-dot stale"></span><strong>BCHUSDT</strong><span class="symbol-price">204.6000</span><time>23:06</time></div><div class="symbol-item" data-ts="2026-06-22T14:06:09.155103+00:00"><span class="status-dot stale"></span><strong>DOTUSDT</strong><span class="symbol-price">0.97340</span><time>23:06</time></div><div class="symbol-item" data-ts="2026-06-22T14:05:00.849446+00:00"><span class="status-dot stale"></span><strong>TRXUSDT</strong><span class="symbol-price">0.33170</span><time>23:05</time></div><div class="symbol-item" data-ts="2026-06-22T14:05:01.501866+00:00"><span class="status-dot stale"></span><strong>SUIUSDT</strong><span class="symbol-price">0.73760</span><time>23:05</time></div></div>
+    </section>
+
+    <nav class="tabs" aria-label="대시보드 보기">
+      <button class="tab active" data-tab="positions">오픈 포지션 <span>13</span></button>
+      <button class="tab" data-tab="families">전략 상태 <span>10</span></button>
+      <button class="tab" data-tab="orders">신호·주문 <span>15</span></button>
+      <button class="tab" data-tab="trades">청산 원장 <span>1</span></button>
+    </nav>
+
+    <section class="tab-panel active" id="positions">
+      <div class="section-heading"><div><span class="eyebrow">EXPOSURE</span><h2>현재 열린 포지션</h2></div><span class="subtle">미실현 값은 수수료 차감 전 gross</span></div>
+      <div class="table-wrap"><table><thead><tr><th>심볼</th><th>전략</th><th>방향</th><th>진입가</th><th>현재가</th><th>미실현 gross</th><th>진행 R</th><th>SL</th><th>TP</th><th>보유/만료 봉</th><th>진입 KST</th></tr></thead><tbody><tr data-family="PATTERN_BOX_PRESSURE_15M" data-symbol="SOLUSDT"><td><strong>SOLUSDT</strong></td><td>Box Pressure</td><td><span class="pill long">LONG</span></td><td class="num">74.9300</td><td class="num">74.6300</td><td class="num negative">-0.40%</td><td class="num negative">-0.18R</td><td class="num stop">73.2219</td><td class="num target">76.9798</td><td class="num">0 / 32</td><td>06-22 23:00</td></tr><tr data-family="PATTERN_BOX_BREAKOUT_15M" data-symbol="LTCUSDT"><td><strong>LTCUSDT</strong></td><td>Box Breakout</td><td><span class="pill long">LONG</span></td><td class="num">45.6900</td><td class="num">45.5300</td><td class="num negative">-0.35%</td><td class="num negative">-0.15R</td><td class="num stop">44.6400</td><td class="num target">47.2650</td><td class="num">1 / 96</td><td>06-22 22:45</td></tr><tr data-family="PATTERN_BOX_PRESSURE_15M" data-symbol="SOLUSDT"><td><strong>SOLUSDT</strong></td><td>Box Pressure</td><td><span class="pill long">LONG</span></td><td class="num">74.6700</td><td class="num">74.6300</td><td class="num negative">-0.05%</td><td class="num negative">-0.03R</td><td class="num stop">73.2217</td><td class="num target">76.4080</td><td class="num">1 / 32</td><td>06-22 22:45</td></tr><tr data-family="PATTERN_BOX_BREAKOUT_15M" data-symbol="BTCUSDT"><td><strong>BTCUSDT</strong></td><td>Box Breakout</td><td><span class="pill long">LONG</span></td><td class="num">65,381.30</td><td class="num">65,398.40</td><td class="num positive">+0.03%</td><td class="num positive">+0.01R</td><td class="num stop">63,835.00</td><td class="num target">67,700.75</td><td class="num">1 / 96</td><td>06-22 22:45</td></tr><tr data-family="PATTERN_BOX_PRESSURE_15M" data-symbol="DOGEUSDT"><td><strong>DOGEUSDT</strong></td><td>Box Pressure</td><td><span class="pill long">LONG</span></td><td class="num">0.08456</td><td class="num">0.08470</td><td class="num positive">+0.17%</td><td class="num positive">+0.08R</td><td class="num stop">0.08271</td><td class="num target">0.08678</td><td class="num">4 / 32</td><td>06-22 22:00</td></tr><tr data-family="PATTERN_BOX_PRESSURE_15M" data-symbol="BTCUSDT"><td><strong>BTCUSDT</strong></td><td>Box Pressure</td><td><span class="pill long">LONG</span></td><td class="num">65,122.50</td><td class="num">65,398.40</td><td class="num positive">+0.42%</td><td class="num positive">+0.19R</td><td class="num stop">63,687.47</td><td class="num target">66,844.53</td><td class="num">4 / 32</td><td>06-22 22:00</td></tr><tr data-family="PATTERN_BOX_PRESSURE_15M" data-symbol="BTCUSDT"><td><strong>BTCUSDT</strong></td><td>Box Pressure</td><td><span class="pill long">LONG</span></td><td class="num">64,928.80</td><td class="num">65,398.40</td><td class="num positive">+0.72%</td><td class="num positive">+0.32R</td><td class="num stop">63,454.90</td><td class="num target">66,697.48</td><td class="num">6 / 32</td><td>06-22 21:30</td></tr><tr data-family="MOMENTUM_SCOPE_PROXY_LONG" data-symbol="LTCUSDT"><td><strong>LTCUSDT</strong></td><td>Momentum Scope Proxy</td><td><span class="pill long">LONG</span></td><td class="num">45.2300</td><td class="num">45.5300</td><td class="num positive">+0.66%</td><td class="num positive">+0.51R</td><td class="num stop">44.6400</td><td class="num target">46.4100</td><td class="num">2 / 48</td><td>06-22 21:00</td></tr><tr data-family="MOMENTUM_SCOPE_PROXY_LONG" data-symbol="BTCUSDT"><td><strong>BTCUSDT</strong></td><td>Momentum Scope Proxy</td><td><span class="pill long">LONG</span></td><td class="num">64,630.40</td><td class="num">65,398.40</td><td class="num positive">+1.19%</td><td class="num positive">+0.97R</td><td class="num stop">63,835.00</td><td class="num target">66,221.20</td><td class="num">2 / 48</td><td>06-22 21:00</td></tr><tr data-family="PATTERN_BOX_BREAKOUT_15M" data-symbol="TRXUSDT"><td><strong>TRXUSDT</strong></td><td>Box Breakout</td><td><span class="pill long">LONG</span></td><td class="num">0.33113</td><td class="num">0.33170</td><td class="num positive">+0.17%</td><td class="num positive">+0.13R</td><td class="num stop">0.32686</td><td class="num target">0.33753</td><td class="num">19 / 96</td><td>06-22 18:15</td></tr><tr data-family="PATTERN_BOX_PRESSURE_15M" data-symbol="TRXUSDT"><td><strong>TRXUSDT</strong></td><td>Box Pressure</td><td><span class="pill long">LONG</span></td><td class="num">0.33006</td><td class="num">0.33170</td><td class="num positive">+0.50%</td><td class="num positive">+0.51R</td><td class="num stop">0.32685</td><td class="num target">0.33392</td><td class="num">23 / 32</td><td>06-22 17:15</td></tr><tr data-family="MOMENTUM_SCOPE_PROXY_LONG" data-symbol="ETHUSDT"><td><strong>ETHUSDT</strong></td><td>Momentum Scope Proxy</td><td><span class="pill long">LONG</span></td><td class="num">1,745.81</td><td class="num">1,771.96</td><td class="num positive">+1.50%</td><td class="num positive">+0.61R</td><td class="num stop">1,703.19</td><td class="num target">1,831.05</td><td class="num">6 / 48</td><td>06-22 17:00</td></tr><tr data-family="PATTERN_BOX_BREAKOUT_15M" data-symbol="TRXUSDT"><td><strong>TRXUSDT</strong></td><td>Box Breakout</td><td><span class="pill long">LONG</span></td><td class="num">0.32987</td><td class="num">0.33170</td><td class="num positive">+0.55%</td><td class="num positive">+0.61R</td><td class="num stop">0.32686</td><td class="num target">0.33439</td><td class="num">25 / 96</td><td>06-22 16:45</td></tr></tbody></table></div>
+    </section>
+    <section class="tab-panel" id="families">
+      <div class="section-heading"><div><span class="eyebrow">PORTFOLIO</span><h2>활성 Family</h2></div><span class="subtle">빈 allowlist · 연결된 family 전체 ON</span></div>
+      <div class="table-wrap"><table><thead><tr><th>Family</th><th>상태</th><th>방향</th><th>검증</th><th>주문</th><th>진입</th><th>Open</th><th>청산</th><th>W / L</th><th>실현 net</th><th>최근 신호 KST</th></tr></thead><tbody><tr><td><strong>Donchian Capitulation</strong><small>PATTERN_DONCHIAN_CAPITULATION_SHORT</small></td><td><span class="pill on">ON</span></td><td><span class="pill short">SHORT</span></td><td><span class="pill pass">OOS PASS</span></td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0 / 0</td><td class="num ">+0.00%</td><td>-</td></tr><tr><td><strong>Box Breakout</strong><small>PATTERN_BOX_BREAKOUT_15M</small></td><td><span class="pill on">ON</span></td><td><span class="pill both">BOTH</span></td><td><span class="pill watch">OBSERVE</span></td><td class="num">4</td><td class="num">4</td><td class="num">4</td><td class="num">0</td><td class="num">0 / 0</td><td class="num ">+0.00%</td><td>06-22 22:45</td></tr><tr><td><strong>Sweep Reclaim Fade</strong><small>PATTERN_SWEEP_RECLAIM_FADE_SHORT</small></td><td><span class="pill on">ON</span></td><td><span class="pill short">SHORT</span></td><td><span class="pill fail">OOS FAIL</span></td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0 / 0</td><td class="num ">+0.00%</td><td>-</td></tr><tr><td><strong>SMC Wide FVG Scout</strong><small>PATTERN_SMC_WIDE_FVG_SCOUT</small></td><td><span class="pill on">ON</span></td><td><span class="pill both">BOTH</span></td><td><span class="pill watch">OBSERVE</span></td><td class="num">1</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0 / 0</td><td class="num ">+0.00%</td><td>06-22 20:40</td></tr><tr><td><strong>Box Pressure</strong><small>PATTERN_BOX_PRESSURE_15M</small></td><td><span class="pill on">ON</span></td><td><span class="pill both">BOTH</span></td><td><span class="pill watch">OBSERVE</span></td><td class="num">6</td><td class="num">6</td><td class="num">6</td><td class="num">0</td><td class="num">0 / 0</td><td class="num ">+0.00%</td><td>06-22 23:00</td></tr><tr><td><strong>Range Reclaim</strong><small>PATTERN_RANGE_RECLAIM_15M</small></td><td><span class="pill on">ON</span></td><td><span class="pill long">LONG</span></td><td><span class="pill watch">OBSERVE</span></td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0 / 0</td><td class="num ">+0.00%</td><td>-</td></tr><tr><td><strong>Ross RSI Divergence</strong><small>ROSS_CAMERON_RSI_DIVERGENCE_MACD_LONG</small></td><td><span class="pill on">ON</span></td><td><span class="pill long">LONG</span></td><td><span class="pill watch">OBSERVE</span></td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0 / 0</td><td class="num ">+0.00%</td><td>-</td></tr><tr><td><strong>Ross Mirror</strong><small>ROSS_CAMERON_MACD_RSI_MIRROR_SHORT</small></td><td><span class="pill on">ON</span></td><td><span class="pill short">SHORT</span></td><td><span class="pill watch">OOS WATCH</span></td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0 / 0</td><td class="num ">+0.00%</td><td>-</td></tr><tr><td><strong>Ross M1 Cross</strong><small>ROSS_CAMERON_MACD_RSI_CROSS_LONG</small></td><td><span class="pill on">ON</span></td><td><span class="pill long">LONG</span></td><td><span class="pill watch">OBSERVE</span></td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0 / 0</td><td class="num ">+0.00%</td><td>-</td></tr><tr><td><strong>Momentum Scope Proxy</strong><small>MOMENTUM_SCOPE_PROXY_LONG</small></td><td><span class="pill on">ON</span></td><td><span class="pill long">LONG</span></td><td><span class="pill watch">PROXY</span></td><td class="num">4</td><td class="num">4</td><td class="num">3</td><td class="num">1</td><td class="num">0 / 1</td><td class="num negative">-0.31%</td><td>06-22 21:00</td></tr></tbody></table></div>
+    </section>
+    <section class="tab-panel" id="orders">
+      <div class="section-heading"><div><span class="eyebrow">EXECUTION</span><h2>신호 및 주문</h2></div><span class="subtle">paper_orders 원장</span></div>
+      <div class="table-wrap"><table><thead><tr><th>신호 KST</th><th>심볼</th><th>전략</th><th>방향</th><th>주문</th><th>지정가</th><th>상태</th><th>체결 KST</th><th>체결가</th></tr></thead><tbody><tr><td>06-22 23:00</td><td><strong>SOLUSDT</strong></td><td>Box Pressure</td><td><span class="pill long">LONG</span></td><td>market</td><td class="num">-</td><td><span class="pill on">체결</span></td><td>06-22 23:00</td><td class="num">74.9300</td></tr><tr><td>06-22 22:45</td><td><strong>LTCUSDT</strong></td><td>Box Breakout</td><td><span class="pill long">LONG</span></td><td>market</td><td class="num">-</td><td><span class="pill on">체결</span></td><td>06-22 22:45</td><td class="num">45.6900</td></tr><tr><td>06-22 22:45</td><td><strong>SOLUSDT</strong></td><td>Box Pressure</td><td><span class="pill long">LONG</span></td><td>market</td><td class="num">-</td><td><span class="pill on">체결</span></td><td>06-22 22:45</td><td class="num">74.6700</td></tr><tr><td>06-22 22:45</td><td><strong>BTCUSDT</strong></td><td>Box Breakout</td><td><span class="pill long">LONG</span></td><td>market</td><td class="num">-</td><td><span class="pill on">체결</span></td><td>06-22 22:45</td><td class="num">65,381.30</td></tr><tr><td>06-22 22:00</td><td><strong>DOGEUSDT</strong></td><td>Box Pressure</td><td><span class="pill long">LONG</span></td><td>market</td><td class="num">-</td><td><span class="pill on">체결</span></td><td>06-22 22:00</td><td class="num">0.08456</td></tr><tr><td>06-22 22:00</td><td><strong>BTCUSDT</strong></td><td>Box Pressure</td><td><span class="pill long">LONG</span></td><td>market</td><td class="num">-</td><td><span class="pill on">체결</span></td><td>06-22 22:00</td><td class="num">65,122.50</td></tr><tr><td>06-22 21:30</td><td><strong>BTCUSDT</strong></td><td>Box Pressure</td><td><span class="pill long">LONG</span></td><td>market</td><td class="num">-</td><td><span class="pill on">체결</span></td><td>06-22 21:30</td><td class="num">64,928.80</td></tr><tr><td>06-22 21:00</td><td><strong>LTCUSDT</strong></td><td>Momentum Scope Proxy</td><td><span class="pill long">LONG</span></td><td>market</td><td class="num">-</td><td><span class="pill on">체결</span></td><td>06-22 21:00</td><td class="num">45.2300</td></tr><tr><td>06-22 21:00</td><td><strong>BTCUSDT</strong></td><td>Momentum Scope Proxy</td><td><span class="pill long">LONG</span></td><td>market</td><td class="num">-</td><td><span class="pill on">체결</span></td><td>06-22 21:00</td><td class="num">64,630.40</td></tr><tr><td>06-22 20:40</td><td><strong>BCHUSDT</strong></td><td>SMC Wide FVG Scout</td><td><span class="pill long">LONG</span></td><td>limit</td><td class="num">200.6500</td><td><span class="pill neutral">미체결</span></td><td>-</td><td class="num">-</td></tr><tr><td>06-22 18:15</td><td><strong>TRXUSDT</strong></td><td>Box Breakout</td><td><span class="pill long">LONG</span></td><td>market</td><td class="num">-</td><td><span class="pill on">체결</span></td><td>06-22 18:15</td><td class="num">0.33113</td></tr><tr><td>06-22 18:00</td><td><strong>BCHUSDT</strong></td><td>Momentum Scope Proxy</td><td><span class="pill long">LONG</span></td><td>market</td><td class="num">-</td><td><span class="pill on">체결</span></td><td>06-22 18:00</td><td class="num">199.6000</td></tr><tr><td>06-22 17:15</td><td><strong>TRXUSDT</strong></td><td>Box Pressure</td><td><span class="pill long">LONG</span></td><td>market</td><td class="num">-</td><td><span class="pill on">체결</span></td><td>06-22 17:15</td><td class="num">0.33006</td></tr><tr><td>06-22 17:00</td><td><strong>ETHUSDT</strong></td><td>Momentum Scope Proxy</td><td><span class="pill long">LONG</span></td><td>market</td><td class="num">-</td><td><span class="pill on">체결</span></td><td>06-22 17:00</td><td class="num">1,745.81</td></tr><tr><td>06-22 16:45</td><td><strong>TRXUSDT</strong></td><td>Box Breakout</td><td><span class="pill long">LONG</span></td><td>market</td><td class="num">-</td><td><span class="pill on">체결</span></td><td>06-22 16:45</td><td class="num">0.32987</td></tr></tbody></table></div>
+    </section>
+    <section class="tab-panel" id="trades">
+      <div class="section-heading"><div><span class="eyebrow">REALIZED</span><h2>청산 거래</h2></div><span class="subtle">paper_trades + paper_positions</span></div>
+      <div class="table-wrap"><table><thead><tr><th>청산 KST</th><th>심볼</th><th>전략</th><th>방향</th><th>진입가</th><th>청산가</th><th>사유</th><th>봉</th><th>실현 net</th><th>왕복 수수료</th><th>슬리피지</th></tr></thead><tbody><tr><td>06-22 19:00</td><td><strong>BCHUSDT</strong></td><td>Momentum Scope Proxy</td><td><span class="pill long">LONG</span></td><td class="num">199.6000</td><td class="num">199.2000</td><td>수동/관리</td><td class="num">1</td><td class="num negative">-0.31%</td><td class="num">11.0 bps</td><td class="num">0.0 bps</td></tr></tbody></table></div>
+    </section>
+  </main>
+
+  <footer>
+    <div><strong>Source of truth</strong><span>new-maemi / paper.sqlite</span></div>
+    <div><strong>회계 기준</strong><span>실현 net = 가격수익률 - 왕복 11.0bps - 설정 슬리피지</span></div>
+    <div><strong>Snapshot generated</strong><span>2026-06-22 23:39:23 KST</span></div>
+  </footer>
+</div>
+<script>
+document.querySelectorAll('.tab').forEach((button) => {
+  button.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach((item) => item.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach((item) => item.classList.remove('active'));
+    button.classList.add('active');
+    document.getElementById(button.dataset.tab).classList.add('active');
+  });
+});
+function refreshAge() {
+  const target = document.getElementById('freshness');
+  const health = document.getElementById('health');
+  const parsed = Date.parse(target.dataset.ts);
+  if (!Number.isFinite(parsed)) return;
+  const minutes = Math.max(0, Math.floor((Date.now() - parsed) / 60000));
+  target.textContent = minutes < 1 ? '방금 전' : `${minutes}분 전`;
+  const dot = health.querySelector('.status-dot');
+  dot.classList.remove('healthy', 'delayed', 'stale');
+  const state = minutes <= 10 ? ['healthy', '정상 스캔'] : minutes <= 30 ? ['delayed', '스캔 지연'] : ['stale', '데이터 오래됨'];
+  dot.classList.add(state[0]);
+  health.querySelector('b').textContent = state[1];
+}
+refreshAge();
+setInterval(refreshAge, 30000);
+</script></body></html>

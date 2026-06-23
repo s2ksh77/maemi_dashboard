@@ -28,9 +28,12 @@ h1, h2, p { margin: 0; letter-spacing: 0; }
 h1 { font-size: 17px; font-weight: 760; }
 .identity p { color: var(--muted); font-size: 11px; margin-top: 2px; }
 .runtime { display: flex; align-items: center; gap: 10px; color: var(--muted); white-space: nowrap; }
-.health, .mode { display: inline-flex; align-items: center; gap: 7px; height: 30px; padding: 0 9px; border: 1px solid var(--line); border-radius: 5px; }
+.health, .mode, .source-mode { display: inline-flex; align-items: center; gap: 7px; height: 30px; padding: 0 9px; border: 1px solid var(--line); border-radius: 5px; }
 .health b { color: var(--text); font-size: 11px; }
 .mode { color: var(--amber); border-color: #5b4b25; background: #201d14; font-size: 10px; font-weight: 800; }
+.source-mode { color: var(--muted); font-size: 10px; font-weight: 800; }
+.source-mode.live { color: var(--green); border-color: #2c6047; background: var(--green-soft); }
+.source-mode.snapshot { color: var(--cyan); border-color: #31596a; background: var(--cyan-soft); }
 .status-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; background: var(--muted); flex: 0 0 auto; }
 .status-dot.healthy { background: var(--green); box-shadow: 0 0 0 3px rgba(100,217,159,.12); }
 .status-dot.delayed { background: var(--amber); }
@@ -125,9 +128,10 @@ footer strong { color: var(--text); font-size: 10px; }
       <div><h1>new-maemi Paper Operations</h1><p>Bybit mainnet data · independent family execution</p></div>
     </div>
     <div class="runtime">
-      <span class="health" id="health" data-ts="2026-06-23T08:50:02.877308+00:00"><i class="status-dot healthy"></i><b>정상 스캔</b></span>
+      <span class="health" id="health" data-ts="2026-06-23T08:55:42.576309+00:00"><i class="status-dot healthy"></i><b>정상 스캔</b></span>
+      <span class="source-mode snapshot">SNAPSHOT</span>
       <span class="mode">PAPER</span>
-      <time id="freshness" data-ts="2026-06-23T08:50:02.877308+00:00">06-23 17:50 KST</time>
+      <time id="freshness" data-ts="2026-06-23T08:55:42.576309+00:00">06-23 17:55 KST</time>
     </div>
   </header>
 
@@ -138,14 +142,14 @@ footer strong { color: var(--text); font-size: 10px; }
       <div class="metric"><span>실현 net</span><strong class="negative">-10.34%</strong><small>fractional return</small></div>
       <div class="metric"><span>스캔 범위</span><strong>13</strong><small>symbols · 10 families</small></div>
       <div class="metric"><span>거래 비용</span><strong>11.0 bps</strong><small>round trip · slip 0.0</small></div>
-      <div class="metric"><span>결정 감사</span><strong>8,538</strong><small>rows</small></div>
+      <div class="metric"><span>결정 감사</span><strong>8,559</strong><small>rows</small></div>
     </section>
 
 
 
     <section class="scan-band">
       <div class="section-heading"><div><span class="eyebrow">MARKET WATCH</span><h2>13종목 스캔 상태</h2></div><span class="subtle">마지막 완료된 판단 기준</span></div>
-      <div class="symbol-grid"><div class="symbol-item" data-ts="2026-06-23T08:45:29.503567+00:00"><span class="status-dot healthy"></span><strong>BTCUSDT</strong><span class="symbol-price">62,343.70</span><time>17:45</time></div><div class="symbol-item" data-ts="2026-06-23T08:45:30.098617+00:00"><span class="status-dot healthy"></span><strong>ETHUSDT</strong><span class="symbol-price">1,648.24</span><time>17:45</time></div><div class="symbol-item" data-ts="2026-06-23T08:45:30.616445+00:00"><span class="status-dot healthy"></span><strong>SOLUSDT</strong><span class="symbol-price">68.7200</span><time>17:45</time></div><div class="symbol-item" data-ts="2026-06-23T08:45:31.117860+00:00"><span class="status-dot healthy"></span><strong>XRPUSDT</strong><span class="symbol-price">1.1014</span><time>17:45</time></div><div class="symbol-item" data-ts="2026-06-23T08:45:31.691207+00:00"><span class="status-dot healthy"></span><strong>DOGEUSDT</strong><span class="symbol-price">0.07910</span><time>17:45</time></div><div class="symbol-item" data-ts="2026-06-23T08:50:00.448547+00:00"><span class="status-dot healthy"></span><strong>ADAUSDT</strong><span class="symbol-price">0.15210</span><time>17:50</time></div><div class="symbol-item" data-ts="2026-06-23T08:50:00.920713+00:00"><span class="status-dot healthy"></span><strong>AVAXUSDT</strong><span class="symbol-price">6.0990</span><time>17:50</time></div><div class="symbol-item" data-ts="2026-06-23T08:50:01.425910+00:00"><span class="status-dot healthy"></span><strong>LINKUSDT</strong><span class="symbol-price">7.5300</span><time>17:50</time></div><div class="symbol-item" data-ts="2026-06-23T08:50:01.931496+00:00"><span class="status-dot healthy"></span><strong>LTCUSDT</strong><span class="symbol-price">43.2900</span><time>17:50</time></div><div class="symbol-item" data-ts="2026-06-23T08:50:02.877308+00:00"><span class="status-dot healthy"></span><strong>BCHUSDT</strong><span class="symbol-price">188.5000</span><time>17:50</time></div><div class="symbol-item" data-ts="2026-06-23T08:45:35.382851+00:00"><span class="status-dot healthy"></span><strong>DOTUSDT</strong><span class="symbol-price">0.89130</span><time>17:45</time></div><div class="symbol-item" data-ts="2026-06-23T08:45:36.282338+00:00"><span class="status-dot healthy"></span><strong>TRXUSDT</strong><span class="symbol-price">0.33060</span><time>17:45</time></div><div class="symbol-item" data-ts="2026-06-23T08:45:37.164897+00:00"><span class="status-dot healthy"></span><strong>SUIUSDT</strong><span class="symbol-price">0.68330</span><time>17:45</time></div></div>
+      <div class="symbol-grid"><div class="symbol-item" data-ts="2026-06-23T08:55:34.482521+00:00"><span class="status-dot healthy"></span><strong>BTCUSDT</strong><span class="symbol-price">62,407.70</span><time>17:55</time></div><div class="symbol-item" data-ts="2026-06-23T08:55:35.079259+00:00"><span class="status-dot healthy"></span><strong>ETHUSDT</strong><span class="symbol-price">1,648.95</span><time>17:55</time></div><div class="symbol-item" data-ts="2026-06-23T08:55:35.614974+00:00"><span class="status-dot healthy"></span><strong>SOLUSDT</strong><span class="symbol-price">68.6900</span><time>17:55</time></div><div class="symbol-item" data-ts="2026-06-23T08:55:36.132574+00:00"><span class="status-dot healthy"></span><strong>XRPUSDT</strong><span class="symbol-price">1.1002</span><time>17:55</time></div><div class="symbol-item" data-ts="2026-06-23T08:55:36.784992+00:00"><span class="status-dot healthy"></span><strong>DOGEUSDT</strong><span class="symbol-price">0.07910</span><time>17:55</time></div><div class="symbol-item" data-ts="2026-06-23T08:55:37.862694+00:00"><span class="status-dot healthy"></span><strong>ADAUSDT</strong><span class="symbol-price">0.15240</span><time>17:55</time></div><div class="symbol-item" data-ts="2026-06-23T08:55:38.626281+00:00"><span class="status-dot healthy"></span><strong>AVAXUSDT</strong><span class="symbol-price">6.1210</span><time>17:55</time></div><div class="symbol-item" data-ts="2026-06-23T08:55:39.544467+00:00"><span class="status-dot healthy"></span><strong>LINKUSDT</strong><span class="symbol-price">7.5370</span><time>17:55</time></div><div class="symbol-item" data-ts="2026-06-23T08:55:40.249221+00:00"><span class="status-dot healthy"></span><strong>LTCUSDT</strong><span class="symbol-price">43.3600</span><time>17:55</time></div><div class="symbol-item" data-ts="2026-06-23T08:55:40.809420+00:00"><span class="status-dot healthy"></span><strong>BCHUSDT</strong><span class="symbol-price">188.9000</span><time>17:55</time></div><div class="symbol-item" data-ts="2026-06-23T08:55:41.368620+00:00"><span class="status-dot healthy"></span><strong>DOTUSDT</strong><span class="symbol-price">0.89180</span><time>17:55</time></div><div class="symbol-item" data-ts="2026-06-23T08:55:42.000087+00:00"><span class="status-dot healthy"></span><strong>TRXUSDT</strong><span class="symbol-price">0.33050</span><time>17:55</time></div><div class="symbol-item" data-ts="2026-06-23T08:55:42.576309+00:00"><span class="status-dot healthy"></span><strong>SUIUSDT</strong><span class="symbol-price">0.68300</span><time>17:55</time></div></div>
     </section>
 
     <nav class="tabs" aria-label="대시보드 보기">
@@ -158,7 +162,7 @@ footer strong { color: var(--text); font-size: 10px; }
 
     <section class="tab-panel active" id="positions">
       <div class="section-heading"><div><span class="eyebrow">EXPOSURE</span><h2>현재 열린 포지션</h2></div><span class="subtle">미실현 값은 수수료 차감 전 gross</span></div>
-      <div class="table-wrap"><table><thead><tr><th>심볼</th><th>전략</th><th>방향</th><th>진입가</th><th>현재가</th><th>미실현 gross</th><th>진행 R</th><th>SL</th><th>TP</th><th>보유/만료 봉</th><th>진입 KST</th></tr></thead><tbody><tr data-family="PATTERN_BOX_BREAKOUT_15M" data-symbol="BTCUSDT"><td><strong>BTCUSDT</strong></td><td>Box Breakout</td><td><span class="pill short">SHORT</span></td><td class="num">63,185.00</td><td class="num">62,343.70</td><td class="num positive">+1.33%</td><td class="num positive">+0.55R</td><td class="num stop">64,707.00</td><td class="num target">60,902.00</td><td class="num">10 / 48</td><td>06-23 15:15</td></tr><tr data-family="PATTERN_BOX_BREAKOUT_15M" data-symbol="XRPUSDT"><td><strong>XRPUSDT</strong></td><td>Box Breakout</td><td><span class="pill short">SHORT</span></td><td class="num">1.1168</td><td class="num">1.1014</td><td class="num positive">+1.38%</td><td class="num positive">+0.58R</td><td class="num stop">1.1434</td><td class="num target">1.0769</td><td class="num">15 / 48</td><td>06-23 14:00</td></tr></tbody></table></div>
+      <div class="table-wrap"><table><thead><tr><th>심볼</th><th>전략</th><th>방향</th><th>진입가</th><th>현재가</th><th>미실현 gross</th><th>진행 R</th><th>SL</th><th>TP</th><th>보유/만료 봉</th><th>진입 KST</th></tr></thead><tbody><tr data-family="PATTERN_BOX_BREAKOUT_15M" data-symbol="BTCUSDT"><td><strong>BTCUSDT</strong></td><td>Box Breakout</td><td><span class="pill short">SHORT</span></td><td class="num">63,185.00</td><td class="num">62,407.70</td><td class="num positive">+1.23%</td><td class="num positive">+0.51R</td><td class="num stop">64,707.00</td><td class="num target">60,902.00</td><td class="num">10 / 48</td><td>06-23 15:15</td></tr><tr data-family="PATTERN_BOX_BREAKOUT_15M" data-symbol="XRPUSDT"><td><strong>XRPUSDT</strong></td><td>Box Breakout</td><td><span class="pill short">SHORT</span></td><td class="num">1.1168</td><td class="num">1.1002</td><td class="num positive">+1.49%</td><td class="num positive">+0.62R</td><td class="num stop">1.1434</td><td class="num target">1.0769</td><td class="num">15 / 48</td><td>06-23 14:00</td></tr></tbody></table></div>
     </section>
     <section class="tab-panel" id="perf">
       <div class="section-heading"><div><span class="eyebrow">PERFORMANCE</span><h2>전략별 성과 · 구간(era) 분리</h2></div><span class="subtle">재정비 전/후 로직이 달라 구간을 섞지 않음</span></div>
@@ -181,10 +185,25 @@ footer strong { color: var(--text); font-size: 10px; }
   <footer>
     <div><strong>Source of truth</strong><span>/tmp/maemi_dashboard_forward_v2.sqlite</span></div>
     <div><strong>회계 기준</strong><span>실현 net = 가격수익률 - 왕복 11.0bps - 설정 슬리피지</span></div>
-    <div><strong>Snapshot generated</strong><span>2026-06-23 17:50:06 KST</span></div>
+    <div><strong>Snapshot generated</strong><span>2026-06-23 17:59:48 KST</span></div>
   </footer>
 </div>
-<script>
+<script>const LIVE_API_URL = "https://168.107.40.189.nip.io/api/dashboard";
+
+async function hydrateFromLiveApi() {
+  if (!LIVE_API_URL) return;
+  try {
+    const response = await fetch(LIVE_API_URL, { cache: 'no-store' });
+    if (!response.ok) throw new Error(`dashboard API ${response.status}`);
+    const payload = await response.json();
+    if (!payload.html) throw new Error('dashboard API returned no HTML');
+    document.open();
+    document.write(payload.html);
+    document.close();
+  } catch (error) {
+    console.error('Live dashboard refresh failed; keeping snapshot.', error);
+  }
+}
 document.querySelectorAll('.tab').forEach((button) => {
   button.addEventListener('click', () => {
     document.querySelectorAll('.tab').forEach((item) => item.classList.remove('active'));
@@ -208,4 +227,5 @@ function refreshAge() {
 }
 refreshAge();
 setInterval(refreshAge, 30000);
+hydrateFromLiveApi();
 </script></body></html>
